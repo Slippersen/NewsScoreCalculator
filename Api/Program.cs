@@ -26,8 +26,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapPost(
-    "/news/score",
+app.MapPost("/news/score",
     Results<Ok<News>, BadRequest, InternalServerError>
     ([FromBody][Required] NewsCalculationRequest request,
     [FromServices] INewsCalculatorService newsService,
@@ -36,6 +35,26 @@ app.MapPost(
         var score = newsService.GetScore(request.Measurements);
 
         return TypedResults.Ok(score);
+    })
+    .AddEndpointFilter(async (efiContext, next) =>
+    {
+        var measurements = efiContext.GetArgument<NewsCalculationRequest?>(0)?.Measurements;
+
+        if (measurements == default || measurements.Length == 0)
+            return Results.Problem("No measurements provided.",
+            statusCode: StatusCodes.Status400BadRequest);
+
+        if (measurements.Length != 3)
+            return Results.Problem(
+                "Exactly 3 measurements must be provided (TEMP, HR and RR).",
+                statusCode: StatusCodes.Status400BadRequest);
+
+        if (!measurements.All(m => m.Type == MeasurementType.Temp || m.Type == MeasurementType.Hr || m.Type == MeasurementType.Rr))
+            return Results.Problem(
+                "Measurements must include all: TEMP, HR, and RR.",
+                statusCode: StatusCodes.Status400BadRequest);
+
+        return await next(efiContext);
     })
     .WithName("CalculateNews")
     .WithDescription("National Early Warning Score (NEWS)")
