@@ -1,43 +1,47 @@
-var builder = WebApplication.CreateBuilder(args);
+using System.ComponentModel.DataAnnotations;
+using Api.Models;
+using Api.Services;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
+// NEWS calculator service
+builder.Services.AddScoped<INewsCalculatorService, NewsCalculatorService>();
+
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwaggerUI();
+    app.UseSwagger();
 }
 
 app.UseHttpsRedirection();
 
-app.MapGet("/weatherforecast", GetWeatherForecast).WithName("GetWeatherForecast");
+app.MapPost(
+    "/news/score",
+    Results<Ok<News>, BadRequest, InternalServerError>
+    ([FromBody][Required] NewsCalculationRequest request,
+    [FromServices] INewsCalculatorService newsService,
+    CancellationToken ct = default) =>
+    {
+        var score = newsService.GetScore(request.Measurements);
+
+        return TypedResults.Ok(score);
+    })
+    .WithName("CalculateNews")
+    .WithDescription("National Early Warning Score (NEWS)")
+    .WithSummary("Calculate the National Early Warning Score (NEWS) based on the measurements provided.")
+    .WithOpenApi();
 
 app.Run();
 
-static WeatherForecast[] GetWeatherForecast()
-{
-    var summaries = new[]
-    {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
-
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-
-    return forecast;
-}
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+public partial class Program { }
