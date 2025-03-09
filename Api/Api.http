@@ -6,10 +6,19 @@ Content-Type: application/json
 
 {
     "measurements": [
-        {"TEMP": 39},
-        {"HR": 43},
-        {"RR": 19}
-    ]
+    {
+      "type": "TEMP",
+      "value": 37
+    },
+    {
+      "type": "HR",
+      "value": 26
+    },
+    {
+      "type": "RR",
+      "value": 19
+    }
+  ]
 }
 
 ###

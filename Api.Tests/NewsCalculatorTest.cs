@@ -1,8 +1,7 @@
-﻿using System.Net.Http.Json;
+﻿using System.Net;
+using System.Net.Http.Json;
 using Api.Models;
-using Api.Services;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Moq;
 
 namespace Api.Tests;
 
@@ -24,7 +23,7 @@ public class NewsCalculatorTest()
         //  { "score": 2 }
 
         // Arrange
-        var measurements = new NewsCalculationRequest()
+        var request = new NewsCalculationRequest()
         {
             Measurements =
             [
@@ -34,17 +33,15 @@ public class NewsCalculatorTest()
             ]
         };
 
-        var mockNewsCalculatorService = new Mock<INewsCalculatorService>();
-        mockNewsCalculatorService.Setup(service =>
-            service.GetScore(It.IsAny<Measurement[]>())).Returns(new News(2));
-
         // Act
         await using var application = new WebApplicationFactory<Program>();
         using var client = application.CreateClient();
-        var response = await client.PostAsJsonAsync("/news/score", measurements);
+
+        var response = await client.PostAsJsonAsync("/news/score", request);
+        var result = await response.Content.ReadFromJsonAsync<News>();
 
         // Assert
-        var result = await response.Content.ReadFromJsonAsync<News>();
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.IsType<News>(result);
         Assert.Equal(2, result.Score);
     }

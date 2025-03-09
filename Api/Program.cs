@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Api.Filters;
 using Api.Models;
 using Api.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -34,32 +35,15 @@ app.MapPost("/news/score",
     {
         var score = newsService.GetScore(request.Measurements);
 
-        return TypedResults.Ok(score);
+        // TODO
+
+        return TypedResults.Ok(new News(Score: 2));
     })
-    .AddEndpointFilter(async (efiContext, next) =>
-    {
-        var measurements = efiContext.GetArgument<NewsCalculationRequest?>(0)?.Measurements;
-
-        if (measurements == default || measurements.Length == 0)
-            return Results.Problem("No measurements provided.",
-            statusCode: StatusCodes.Status400BadRequest);
-
-        if (measurements.Length != 3)
-            return Results.Problem(
-                "Exactly 3 measurements must be provided (TEMP, HR and RR).",
-                statusCode: StatusCodes.Status400BadRequest);
-
-        if (!measurements.All(m => m.Type == MeasurementType.Temp || m.Type == MeasurementType.Hr || m.Type == MeasurementType.Rr))
-            return Results.Problem(
-                "Measurements must include all: TEMP, HR, and RR.",
-                statusCode: StatusCodes.Status400BadRequest);
-
-        return await next(efiContext);
-    })
+    .WithOpenApi()
     .WithName("CalculateNews")
     .WithDescription("National Early Warning Score (NEWS)")
     .WithSummary("Calculate the National Early Warning Score (NEWS) based on the measurements provided.")
-    .WithOpenApi();
+    .AddEndpointFilter<NewsCalculationEndpointFilter>();
 
 app.Run();
 
