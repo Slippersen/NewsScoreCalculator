@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 import { NewsRequest, NewsResponse } from "./types";
 
@@ -10,14 +10,15 @@ class Api {
   }
 
   GetNewsCalculation = async (
-    newsRequest: NewsRequest
-  ): Promise<NewsResponse | void> => {
+    newsRequest: NewsRequest,
+    // setErrorMessage: (value: React.SetStateAction<string | null>) => void
+  ): Promise<NewsResponse> => {
     return axios
       .post<NewsResponse>("https://localhost:5013/news/score", newsRequest)
       .then((response) => {
         return response?.data;
       })
-      .catch((error) => Promise.reject(error.response));
+      .catch((error: AxiosError) => Promise.reject(error));
   };
 }
 
