@@ -8,11 +8,11 @@ Content-Type: application/json
     "measurements": [
     {
       "type": "TEMP",
-      "value": 37
+      "value": 39
     },
     {
       "type": "HR",
-      "value": 26
+      "value": 43
     },
     {
       "type": "RR",

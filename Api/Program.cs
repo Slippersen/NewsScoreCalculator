@@ -35,9 +35,7 @@ app.MapPost("/news/score",
     {
         var score = newsService.GetScore(request.Measurements);
 
-        // TODO
-
-        return TypedResults.Ok(new News(Score: 2));
+        return TypedResults.Ok(score);
     })
     .WithOpenApi()
     .WithName("CalculateNews")
