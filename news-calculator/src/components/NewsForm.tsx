@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { BaseSyntheticEvent, useEffect, useState } from "react";
 import { AxiosError } from "axios";
 import styled from "styled-components";
 
@@ -11,7 +11,7 @@ import {
   NewsResponse,
 } from "../types";
 
-const Container = styled.div`
+const Container = styled.form`
   /* Content */
 
   display: flex;
@@ -196,7 +196,9 @@ const NewsForm = () => {
     setErrorMessage(null);
   }, [bodyTemperature, heartRate, respiratoryRate]);
 
-  const handleCalculate = async () => {
+  const handleCalculate = async (e: BaseSyntheticEvent) => {
+    e.preventDefault();
+
     const temp: Measurement = {
       type: "TEMP",
       value: parseInt(bodyTemperature),
@@ -232,12 +234,12 @@ const NewsForm = () => {
   };
 
   return (
-    <Container>
+    <Container onSubmit={handleCalculate}>
       <Title>NEWS score calculator</Title>
       <FormField>
         <Label>
           Body temperature
-          <span>Degrees Celsius</span>
+          <span>Degrees celsius</span>
         </Label>
         <Input
           type="number"
@@ -265,7 +267,7 @@ const NewsForm = () => {
         />
       </FormField>
       <ButtonGroup>
-        <CalculateButton onClick={handleCalculate}>Calculate NEWS score</CalculateButton>
+        <CalculateButton onClick={handleCalculate} type="submit">Calculate NEWS score</CalculateButton>
         <ResetButton onClick={handleReset}>Reset form</ResetButton>
       </ButtonGroup>
       {newsScore && <Result>News score: {newsScore}</Result>}
