@@ -3,12 +3,31 @@
   // Hover to view descriptions of existing attributes.
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
+  "compounds": [
+    {
+      "presentation": {
+        "order": 1
+      },
+      "name": "Launch API & App",
+      "configurations": ["Launch API", "Launch App"],
+      "stopAll": true
+    }
+  ],
   "configurations": [
     {
-      "name": "C#: Api",
+      "name": "Launch API",
       "type": "dotnet",
       "request": "launch",
       "projectPath": "${workspaceFolder}/Api/Api.csproj"
+    },
+    {
+      "presentation": {
+        "hidden": true,
+      },
+      "command": "yarn --cwd ~/dev/NewsCalculator/news-calculator start",
+      "name": "Launch App",
+      "request": "launch",
+      "type": "node-terminal"
     }
   ]
 }
