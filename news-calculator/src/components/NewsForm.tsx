@@ -97,11 +97,9 @@ const Input = styled.input`
   width: 404px;
   height: 41px;
 
-  color: #24102B;
-  background: #FAF6FF;
+  color: #24102b;
+  background: #faf6ff;
   border: 1px solid rgba(116, 36, 218, 0.05);
-
-  
 `;
 
 const ButtonGroup = styled.div`
@@ -118,7 +116,7 @@ const ButtonGroup = styled.div`
 
   button {
     /* Button */
-    
+
     /* Standard brødtekst */
     font-style: normal;
     font-weight: 400;
@@ -147,8 +145,16 @@ const CalculateButton = styled.button`
   width: 201px;
   height: 40px;
 
-  background: #7424DA;
-  color: #FFFFFF;
+  ${(props) =>
+    props.disabled
+      ? `
+      cursor: default;
+      opacity: 0.7;
+    `
+      : `
+      background: #7424da;
+      color: #ffffff;
+    `}
 `;
 
 const ResetButton = styled.button`
@@ -157,7 +163,7 @@ const ResetButton = styled.button`
   width: 115px;
   height: 40px;
 
-  background: #FAF6FF;
+  background: #faf6ff;
 `;
 
 const Result = styled.div<{ $isError?: boolean }>`
@@ -180,8 +186,6 @@ const Result = styled.div<{ $isError?: boolean }>`
   border: 1px solid rgba(116, 36, 218, 0.4);
   border-radius: 10px;
 `;
-
-// TODO: validate the form, disable button
 
 const NewsForm = () => {
   const [bodyTemperature, setBodyTemperature] = useState<string>("");
@@ -243,6 +247,7 @@ const NewsForm = () => {
         </Label>
         <Input
           type="number"
+          value={bodyTemperature}
           onChange={(e) => setBodyTemperature(e.target.value)}
         />
       </FormField>
@@ -253,6 +258,7 @@ const NewsForm = () => {
         </Label>
         <Input
           type="number"
+          value={heartRate}
           onChange={(e) => setHeartRate(e.target.value)}
         />
       </FormField>
@@ -263,12 +269,21 @@ const NewsForm = () => {
         </Label>
         <Input
           type="number"
+          value={respiratoryRate}
           onChange={(e) => setRespiratoryRate(e.target.value)}
         />
       </FormField>
       <ButtonGroup>
-        <CalculateButton onClick={handleCalculate} type="submit">Calculate NEWS score</CalculateButton>
-        <ResetButton onClick={handleReset}>Reset form</ResetButton>
+        <CalculateButton
+          onClick={handleCalculate}
+          type="submit"
+          disabled={!!errorMessage}
+        >
+          Calculate NEWS score
+        </CalculateButton>
+        <ResetButton onClick={handleReset} type="button">
+          Reset form
+        </ResetButton>
       </ButtonGroup>
       {newsScore && <Result>News score: {newsScore}</Result>}
       {errorMessage && <Result $isError={true}>{errorMessage}</Result>}
