@@ -11,7 +11,7 @@ public class NewsCalculationEndpointFilter : IEndpointFilter
         {
             MeasurementType.Temp => value > 31 && value <= 42 ? (true, null) : (false, "Temperature must be between 31 and 42"),
             MeasurementType.Hr => value > 25 && value <= 220 ? (true, null) : (false, "Heart rate must be between 25 and 220"),
-            MeasurementType.Rr => value > 3 && value <= 60 ? (true, null) : (false, "Heart rate must be between 25 and 220"),
+            MeasurementType.Rr => value > 3 && value <= 60 ? (true, null) : (false, "Respiratory rate must be between 3 and 60"),
             _ => (false, "Invalid measurement type"),
         };
     }
