@@ -1,3 +1,3 @@
 namespace Api.Models;
 
-public record Measurement(MeasurementType Type, int Value);
+public record struct Measurement(MeasurementType Type, int? Value);

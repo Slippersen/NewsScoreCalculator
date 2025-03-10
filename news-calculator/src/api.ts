@@ -1,24 +1,24 @@
 import axios, { AxiosError } from "axios";
 
-import { NewsRequest, NewsResponse } from "./types";
+import { NewsErrorData, NewsRequest, NewsResponse } from "./types";
 
 class Api {
   static instance = new Api();
 
   constructor() {
     axios.defaults.headers.patch["Content-Type"] = "application/json";
+    axios.defaults.headers.patch["Accept"] = "application/json";
   }
 
   GetNewsCalculation = async (
     newsRequest: NewsRequest,
-    // setErrorMessage: (value: React.SetStateAction<string | null>) => void
   ): Promise<NewsResponse> => {
     return axios
-      .post<NewsResponse>("https://localhost:5013/news/score", newsRequest)
+      .post<NewsResponse>(`${process.env.REACT_APP_API_URL}/news/score`, newsRequest)
       .then((response) => {
         return response?.data;
       })
-      .catch((error: AxiosError) => Promise.reject(error));
+      .catch((error: AxiosError<NewsErrorData>) => Promise.reject(error));
   };
 }
 

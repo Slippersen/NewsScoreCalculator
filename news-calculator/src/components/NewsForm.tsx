@@ -2,8 +2,9 @@ import { useState } from "react";
 import { AxiosError } from "axios";
 import styled from "styled-components";
 
-import { NewsRequest, NewsResponse } from "../types";
 import Api from "../api";
+
+import { Measurement, NewsErrorData, NewsRequest, NewsResponse } from "../types";
 
 const Container = styled.div`
   max-width: 600px;
@@ -57,6 +58,9 @@ const Result = styled.div`
   font-weight: bold;
 `;
 
+// TODO: style the form
+// TODO: validate the form, disable button, useEffect
+
 const NewsForm = () => {
   const [bodyTemperature, setBodyTemperature] = useState<string>("");
   const [heartRate, setHeartRate] = useState<string>("");
@@ -65,16 +69,30 @@ const NewsForm = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleCalculate = async () => {
-    const request: NewsRequest = {
-      TEMP: parseInt(bodyTemperature),
-      HR: parseInt(heartRate),
-      RR: parseInt(respiratoryRate),
+    const temp: Measurement = {
+      type: "TEMP",
+      value: parseInt(bodyTemperature),
     };
+
+    const hr: Measurement = {
+      type: "HR",
+      value: parseInt(heartRate),
+    };
+
+    const rr: Measurement = {
+      type: "RR",
+      value: parseInt(respiratoryRate),
+    };
+
+    const request: NewsRequest = {
+      measurements: [temp, hr, rr],
+    };
+
     Api.GetNewsCalculation(request)
       .then((response: NewsResponse) => setNewsScore(response.score))
-      .catch((error: AxiosError) => {
-        setErrorMessage(error.message);
+      .catch((error: AxiosError<NewsErrorData>) => {
         console.error(error);
+        setErrorMessage(error.response?.data?.detail!);
       });
   };
 
@@ -123,8 +141,8 @@ const NewsForm = () => {
       </FormField>
       <Button onClick={handleCalculate}>Calculate NEWS score</Button>
       <Button onClick={handleReset}>Reset form</Button>
-      {newsScore !== null && <Result>News score: {newsScore}</Result>}
-      {errorMessage !== null && <Result>Error: {errorMessage}</Result>}
+      {newsScore && <Result>News score: {newsScore}</Result>}
+      {errorMessage && <Result>Error: {errorMessage}</Result>}
     </Container>
   );
 };

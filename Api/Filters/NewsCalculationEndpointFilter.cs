@@ -4,7 +4,7 @@ namespace Api.Filters;
 
 public class NewsCalculationEndpointFilter : IEndpointFilter
 {
-    private static (bool isValid, string? validationMessage) ValidateMeasurement(MeasurementType type, int value)
+    private static (bool isValid, string? validationMessage) ValidateMeasurement(MeasurementType type, int? value)
     {
         // Determine the validation rules based on the measurement type
         return type switch
@@ -21,9 +21,11 @@ public class NewsCalculationEndpointFilter : IEndpointFilter
         EndpointFilterDelegate next)
     {
         // Check if required measurements for NEWS are provided
-        var measurements = context.GetArgument<NewsCalculationRequest?>(0)?.Measurements;
+        var measurements = context.GetArgument<NewsCalculationRequest?>(0)
+            ?.Measurements
+            ?.Where(m => m.Value != default);
 
-        if (measurements == default || measurements.Length == 0)
+        if (measurements == default || !measurements.Any())
         {
             return Results.Problem(
                 "No measurements provided.",
