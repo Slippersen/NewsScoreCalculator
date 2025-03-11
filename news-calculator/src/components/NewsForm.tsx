@@ -18,7 +18,7 @@ const Container = styled.form`
   flex-direction: column;
   align-items: flex-start;
   margin: 0 auto;
-  padding: 0px;
+  padding: 99px 215px;
   gap: 40px;
 
   width: 404px;

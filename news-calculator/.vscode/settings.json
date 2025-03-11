@@ -1,4 +1,4 @@
 {
     "typescript.tsdk": "node_modules\\typescript\\lib",
-    "workbench.colorTheme": "Ayu Dark Bordered"
+    "workbench.colorTheme": "Ayu Mirage Bordered"
 }

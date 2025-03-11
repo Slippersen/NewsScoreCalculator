@@ -1,1 +1,1 @@
-# NewsScoreCalculator
+# NEWS Calculator

@@ -24,10 +24,11 @@
       "presentation": {
         "hidden": true,
       },
-      "command": "yarn --cwd ~/dev/NewsCalculator/news-calculator start",
+      "command": "yarn start",
       "name": "Launch App",
       "request": "launch",
-      "type": "node-terminal"
+      "type": "node-terminal",
+      "cwd": "${workspaceFolder}/news-calculator"
     }
   ]
 }
