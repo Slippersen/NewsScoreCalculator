@@ -16,7 +16,7 @@ public class NewsCalculationEndpointFilter : IEndpointFilter
         };
     }
 
-    public virtual async ValueTask<object?> InvokeAsync(
+    public async ValueTask<object?> InvokeAsync(
         EndpointFilterInvocationContext context,
         EndpointFilterDelegate next)
     {

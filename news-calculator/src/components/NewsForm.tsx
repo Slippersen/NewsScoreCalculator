@@ -277,7 +277,12 @@ const NewsForm = () => {
         <CalculateButton
           onClick={handleCalculate}
           type="submit"
-          disabled={!!errorMessage}
+          disabled={
+            !!errorMessage ||
+            !bodyTemperature ||
+            !heartRate ||
+            !respiratoryRate
+          }
         >
           Calculate NEWS score
         </CalculateButton>
