@@ -1,0 +1,34 @@
+name: build and test
+
+on: [push]
+
+jobs:
+  build-and-test-api:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet-version: [ '9.0.x' ]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup dotnet ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+      - name: Build dotnet
+        run: dotnet build
+      - name: Test dotnet
+        run: dotnet test
+  build-and-test-web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20.x'
+      - name: Install dependencies
+        run: yarn install
+        working-directory: ./news-calculator
+      - name: Build web
+        run: yarn build
+        working-directory: ./news-calculator
